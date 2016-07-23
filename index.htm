@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html ng-app="Locadora">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Locadora de Filmes</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="App.js"></script>
+
+	<script type="text/javascript" src="BuscarFilmeAPI.servico.js"></script>
+	<script type="text/javascript" src="CarrinhoCompra.servico.js"></script>
+	<script type="text/javascript" src="Notificacao.servico.js"></script>
+
+	<script type="text/javascript" src="Cabecalho.controller.js"></script>
+	<script type="text/javascript" src="Carrinho.controller.js"></script>
+	<script type="text/javascript" src="DetalheFilme.controller.js"></script>
+	<script type="text/javascript" src="ListaFilme.controller.js"></script>
+	<script type="text/javascript" src="ListaNotificacao.controller.js"></script>
+	<script type="text/javascript" src="Notificacao.controller.js"></script>
+	<style>
+		ul { list-style-type: none;padding: 0px;margin: 0px; }
+		ul li { margin: 5px 0px; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="jumbotron" ng-controller="CabecalhoController as cc">
+			<h1>Locadora de Filmes</h1>
+
+			<button class="btn btn-warning" ng-click="cc.exibeEscondeCarrinho();">
+				Carrinho 
+				<span class="badge">{{ cc.exibeQuantidadeTotalCarrinho() }}</span>
+			</button>
+
+			<button class="btn btn-danger" ng-click="cc.exibeEscondeNotificacao();">
+				Notificações
+				<span class="badge">{{ cc.exibeQuantidadeTotalNotificacao() }}</span>
+			</button>
+		</div>
+
+		<div class="alert alert-warning" ng-show="nc.mensagemNotificacao" ng-controller="NotificacaoController as nc"> 
+			{{ nc.mensagemNotificacao }} 
+		</div>
+
+		<div class="panel panel-primary" ng-show="layout.exibeNotificacao" ng-controller="NotificacaoListaController as nlc">
+			<div class="panel-heading">{{ nlc.titulo }}</div>
+
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-xs-12" ng-show="nlc.exibeLista().length > 0">
+						<h3>Notificações</h3>
+						<ul>
+							<li ng-repeat="notificacao in nlc.exibeLista() track by $index">
+								{{ notificacao }}
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-primary" ng-show="layout.exibeCarrinho" ng-controller="CarrinhoController as cc">
+			<div class="panel-heading">{{ cc.titulo }}</div>
+
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-xs-12" ng-show="cc.exibeLista().length > 0">
+						<h3>Filmes adicionados</h3>
+						<ul>
+							<li ng-repeat="filme in cc.exibeLista()">
+								<img ng-src="{{ filme.urlCapa }}" />
+								{{ filme.titulo }} - Qtd: {{ filme.quantidade }}
+								<button ng-click="cc.removerFilme(filme);" class="btn btn-danger">Remover filme</button>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+	
+
+		<div class="panel panel-primary" ng-show="layout.exibeListaFilme" ng-controller="ListaFilmeController as lf">
+			<div class="panel-heading">{{ lf.titulo }}</div>
+
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="input-group">
+					      <input type="text" ng-model="lf.textoBusca" class="form-control" placeholder="Buscar por...">
+					      <span class="input-group-btn">
+					        <button class="btn btn-default" type="button" ng-click="lf.Buscar();">Buscar!</button>
+					      </span>
+					    </div><!-- /input-group -->
+					</div>
+
+					<div class="col-xs-12" ng-show="lf.lista.length > 0">
+						<h3>Filmes encontrados</h3>
+						<ul>
+							<li ng-repeat="filme in lf.lista">
+								{{ filme.titulo }}
+								<button ng-click="lf.AbrirDetalheFilme(filme);" class="btn btn-default">Ver detalhe</button>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-primary" ng-show="layout.exibeDetalheFilme" ng-controller="DetalheFilmeController as df">
+			<div class="panel-heading">{{ df.filmeSelecionado.titulo }}</div>
+
+			<div class="panel-body">
+				<img ng-src="{{ df.filmeSelecionado.urlCapa }}" />
+				<ul>
+					<li ng-repeat="info in df.filmeSelecionado.infoAdicional">{{ info.legenda }}: {{ info.descricao }}</li>
+				</ul>
+
+				<button class="btn btn-default" ng-click="df.voltarParaLista();">Voltar</button>
+				<button class="btn btn-primary" ng-click="df.adicionarFilmeNoCarrinho()">Adicionar no Carrinho</button>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
